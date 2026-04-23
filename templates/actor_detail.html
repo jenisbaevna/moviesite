@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ actor.name }} {{ actor.surname }} - MovieSite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Background gradient with blur effect */
+        .hero-background {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
+        }
+
+        /* Glass effect for cards */
+        .glass-effect {
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Actor image container */
+        .actor-image-container {
+            aspect-ratio: 3/4;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .actor-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .actor-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Text glow effect */
+        .text-glow {
+            text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+
+        /* Info card styling */
+        .info-card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        /* Movie card styling */
+        .movie-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .movie-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .movie-poster {
+            aspect-ratio: 2/3;
+            overflow: hidden;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .movie-poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .movie-poster-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+        }
+
+        /* Section divider */
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
+        }
+
+        /* Back button styling */
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            border-radius: 8px;
+            color: #93c5fd;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: rgba(59, 130, 246, 0.3);
+            border-color: rgba(59, 130, 246, 0.8);
+            color: #bfdbfe;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .actor-image-container {
+                max-width: 300px;
+                margin: 0 auto;
+            }
+
+            .movie-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(59, 130, 246, 0.5);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(59, 130, 246, 0.7);
+        }
+
+        /* Birth date badge */
+        .badge {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            color: #93c5fd;
+        }
+
+        /* Bio text styling */
+        .bio-text {
+            line-height: 1.8;
+            color: #cbd5e1;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-white overflow-x-hidden">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-700">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <a href="{% url 'home' %}" class="flex items-center space-x-3 hover:opacity-80 transition-opacity">
+                    <i class="fas fa-film text-2xl text-blue-400"></i>
+                    <span class="text-xl font-bold">MovieSite</span>
+                </a>
+                <div class="flex items-center space-x-4">
+                    <a href="{% url 'home' %}" class="text-slate-300 hover:text-white transition-colors">
+                        <i class="fas fa-home mr-2"></i>Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-background min-h-screen flex items-center pt-20 pb-16">
+        <div class="container mx-auto px-4">
+            <!-- Back Button -->
+            <a href="{% url 'home' %}" class="back-button mb-8 block w-fit">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Home</span>
+            </a>
+
+            <div class="grid lg:grid-cols-3 gap-8">
+                <!-- Actor Image -->
+                <div class="lg:col-span-1 flex justify-center lg:justify-start">
+                    <div class="actor-image-container max-w-xs w-full">
+                        {% if actor.image %}
+                            <img src="{{ actor.image.url }}" 
+                                 alt="{{ actor.name }} {{ actor.surname }}" 
+                                 class="actor-image">
+                        {% else %}
+                            <div class="actor-placeholder">
+                                <div class="text-center">
+                                    <i class="fas fa-user text-6xl text-slate-500 mb-4 block"></i>
+                                    <p class="text-slate-400 text-sm">No image available</p>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Actor Information -->
+                <div class="lg:col-span-2">
+                    <!-- Name and Title -->
+                    <div class="space-y-6">
+                        <div>
+                            <h1 class="text-5xl lg:text-6xl font-bold text-glow mb-2">
+                                {{ actor.name }}
+                            </h1>
+                            <p class="text-2xl text-slate-400">
+                                {{ actor.surname }}
+                            </p>
+                        </div>
+
+                        <!-- Birth Date and Info -->
+                        <div class="flex flex-wrap items-center gap-4">
+                            {% if actor.birth_date %}
+                                <div class="badge">
+                                    <i class="fas fa-birthday-cake mr-2"></i>
+                                    Born: {{ actor.birth_date|date:"M d, Y" }}
+                                </div>
+                            {% endif %}
+                            {% if movies %}
+                                <div class="badge">
+                                    <i class="fas fa-film mr-2"></i>
+                                    {{ movies.count }} Movie{{ movies.count|pluralize }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Biography Section -->
+                        <div class="space-y-4">
+                            <div>
+                                <h2 class="text-2xl font-bold mb-3 text-blue-300">Biography</h2>
+                                <div class="section-divider max-w-48 mb-4"></div>
+                                <p class="bio-text leading-relaxed">
+                                    {{ actor.bio }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Social Links (Optional enhancement) -->
+                        <div class="flex gap-4 pt-6">
+                            <button class="glass-effect px-6 py-2 rounded-lg flex items-center gap-2 hover:bg-white/20 transition-all">
+                                <i class="fab fa-twitter"></i>
+                                <span>Follow</span>
+                            </button>
+                            <button class="glass-effect px-6 py-2 rounded-lg flex items-center gap-2 hover:bg-white/20 transition-all">
+                                <i class="fas fa-share-alt"></i>
+                                <span>Share</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filmography Section -->
+    {% if movies %}
+    <section class="py-16 bg-slate-800">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4">Filmography</h2>
+                <div class="section-divider max-w-md mx-auto"></div>
+                <p class="text-slate-400 mt-4">
+                    {{ actor.name }} has appeared in {{ movies.count }} movie{{ movies.count|pluralize }}
+                </p>
+            </div>
+
+            <!-- Movies Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 movie-grid">
+                {% for movie in movies %}
+                <a href="{% url 'movie_detail' movie.id %}" class="movie-card group">
+                    <!-- Movie Poster -->
+                    <div class="movie-poster">
+                        {% if movie.image %}
+                            <img src="{{ movie.image.url }}" 
+                                 alt="{{ movie.title }}" 
+                                 class="group-hover:scale-110 transition-transform duration-300">
+                        {% else %}
+                            <div class="movie-poster-placeholder">
+                                <div class="text-center">
+                                    <i class="fas fa-film text-3xl text-slate-500 mb-2 block"></i>
+                                    <p class="text-slate-400 text-xs">No image</p>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Movie Info -->
+                    <div class="p-4">
+                        <h3 class="font-semibold text-white group-hover:text-blue-300 transition-colors line-clamp-2">
+                            {{ movie.title }}
+                        </h3>
+                        <p class="text-slate-400 text-sm mt-2">
+                            {{ movie.year|date:"Y" }}
+                        </p>
+                        {% if movie.genres.all %}
+                        <div class="flex flex-wrap gap-1 mt-3">
+                            {% for genre in movie.genres.all|slice:":2" %}
+                            <span class="text-xs bg-slate-700 px-2 py-1 rounded">
+                                {{ genre.genre }}
+                            </span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% else %}
+    <section class="py-16 bg-slate-800">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-slate-400 text-lg">No filmography available for this actor.</p>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 py-8 border-t border-slate-700">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-slate-400">
+                &copy; 2024 MovieSite. Made with <i class="fas fa-heart text-red-500 mx-1"></i> for movie lovers.
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

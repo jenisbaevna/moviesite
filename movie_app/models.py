@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.utils.text import slugify
 from django.contrib.auth.models import AbstractUser
 
 class CustomUSer(AbstractUser):
@@ -12,8 +12,15 @@ class Actors(models.Model):
     bio=models.TextField()
     birth_date=models.DateField()
     image=models.ImageField(upload_to='actors/',blank=True,null=True)
+    slug=models.SlugField(unique=True, blank=True, null=True)
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(f"{self.name}-{self.surname}")
+        super().save(*args, **kwargs)
+    
     def __str__(self):
-        return self.name
+        return f"{self.name} {self.surname}"
 class Genres(models.Model):
     genre=models.CharField(max_length=50)
     def __str__(self):
