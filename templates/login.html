@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - MovieSite</title>
+    <title>Login - MovieSite</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
@@ -34,7 +34,8 @@
             position: fixed;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e') no-repeat center center;
+            background-size: cover;
             background-position: center;
             background-size: cover;
             z-index: -2;
@@ -69,7 +70,7 @@
         }
 
         .wrapper {
-            width: 420px;
+            width: 400px;
             border-radius: 8px;
             padding: 30px;
             text-align: center;
@@ -138,16 +139,6 @@
             font-size: 0.8rem;
             top: 10px;
             transform: translateY(-120%);
-        }
-
-        .input-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .input-row .input-field {
-            margin: 15px 0;
         }
 
         .forget {
@@ -235,7 +226,7 @@
 
         .form-error {
             color: #ff6b6b;
-            font-size: 11px;
+            font-size: 12px;
             margin-top: 4px;
             text-align: left;
         }
@@ -253,10 +244,6 @@
 
             .input-field {
                 margin: 12px 0;
-            }
-
-            .input-row {
-                grid-template-columns: 1fr;
             }
 
             .forget {
@@ -282,7 +269,7 @@
         <form method="POST">
             {% csrf_token %}
 
-            <h2>Register</h2>
+            <h2>Login</h2>
 
             <!-- Error Messages -->
             {% if messages %}
@@ -302,53 +289,32 @@
                 {% endif %}
             </div>
 
-            <!-- First Name & Last Name Row -->
-            <div class="input-row">
-                <div class="input-field">
-                    {{ form.first_name }}
-                    <label for="{{ form.first_name.id_for_label }}">First name</label>
-                    {% if form.first_name.errors %}
-                    <div class="form-error">{{ form.first_name.errors.0 }}</div>
-                    {% endif %}
-                </div>
-
-                <div class="input-field">
-                    {{ form.last_name }}
-                    <label for="{{ form.last_name.id_for_label }}">Last name</label>
-                    {% if form.last_name.errors %}
-                    <div class="form-error">{{ form.last_name.errors.0 }}</div>
-                    {% endif %}
-                </div>
-            </div>
-
             <!-- Password Field -->
             <div class="input-field">
-                {{ form.password1 }}
-                <label for="{{ form.password1.id_for_label }}">Enter password</label>
-                {% if form.password1.errors %}
-                <div class="form-error">{{ form.password1.errors.0 }}</div>
+                {{ form.password }}
+                <label for="{{ form.password.id_for_label }}">Enter your password</label>
+                {% if form.password.errors %}
+                <div class="form-error">{{ form.password.errors.0 }}</div>
                 {% endif %}
             </div>
 
-            <!-- Confirm Password Field -->
-            <div class="input-field">
-                {{ form.password2 }}
-                <label for="{{ form.password2.id_for_label }}">Confirm password</label>
-                {% if form.password2.errors %}
-                <div class="form-error">{{ form.password2.errors.0 }}</div>
-                {% endif %}
+            <!-- Remember & Forgot Password -->
+            <div class="forget">
+                <label for="remember">
+                    <input type="checkbox" id="remember" name="remember">
+                    <p>Remember me</p>
+                </label>
+                <a href="#">Forgot password?</a>
             </div>
 
-            <!-- Register Button -->
-            <button type="submit">Sign Up</button>
+            <!-- Login Button -->
+            <button type="submit">Log In</button>
 
-            <!-- Login Link -->
+            <!-- Register Link -->
             <div class="register">
-                <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+                <p>Don't have an account? <a href="{% url 'register' %}">Register</a></p>
             </div>
         </form>
     </div>
 </body>
 </html>
-
-

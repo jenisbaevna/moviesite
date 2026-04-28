@@ -143,6 +143,26 @@
                     <a href="#" class="text-slate-300 hover:text-white transition-colors">
                         <i class="fas fa-search mr-2"></i>Search
                     </a>
+                    {% if user.is_authenticated %}
+                    <div class="flex items-center space-x-3 pl-4 border-l border-slate-700">
+                        <span class="text-slate-300">{{ user.first_name }}</span>
+                        <a href="{% url 'profile' %}" class="text-slate-300 hover:text-blue-400 transition-colors">
+                            <i class="fas fa-user-circle text-xl"></i>
+                        </a>
+                        <a href="{% url 'logout' %}" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded transition-colors text-sm">
+                            Logout
+                        </a>
+                    </div>
+                    {% else %}
+                    <div class="flex items-center space-x-2 pl-4 border-l border-slate-700">
+                        <a href="{% url 'login' %}" class="text-slate-300 hover:text-blue-400 transition-colors">
+                            Login
+                        </a>
+                        <a href="{% url 'register' %}" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded transition-colors text-sm">
+                            Register
+                        </a>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -329,7 +349,6 @@
     {% endif %}
 
     <!-- Comments Section -->
-    {% if movie.comments.all %}
     <section class="py-16 bg-slate-900">
         <div class="container mx-auto px-4">
             <div class="text-center mb-12">
@@ -337,27 +356,115 @@
                 <div class="section-divider max-w-md mx-auto"></div>
             </div>
 
-            <div class="max-w-4xl mx-auto space-y-6">
-                {% for comment in movie.comments.all %}
-                <div class="glass-effect rounded-xl p-6">
-                    <div class="flex items-start space-x-4">
-                        <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-user text-white"></i>
-                        </div>
-                        <div class="flex-1">
-                            <div class="flex items-center space-x-2 mb-2">
-                                <span class="font-semibold">{{ comment.author.username }}</span>
-                                <span class="text-slate-400 text-sm">{{ comment.created_date|date:"M d, Y" }}</span>
+            <div class="max-w-4xl mx-auto">
+                <!-- Add Comment Form -->
+                {% if user.is_authenticated %}
+                <div class="glass-effect rounded-xl p-8 mb-12">
+                    <h3 class="text-xl font-semibold mb-6 flex items-center">
+                        <i class="fas fa-pen-fancy mr-3 text-blue-400"></i>
+                        Add Your Comment
+                    </h3>
+                    
+                    {% if form.non_field_errors %}
+                    <div class="bg-red-500/20 border border-red-500 text-red-300 px-4 py-3 rounded-lg mb-4">
+                        {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <form method="POST" class="space-y-4">
+                        {% csrf_token %}
+                        
+                        <div>
+                            <label for="{{ form.text.id_for_label }}" class="block text-sm font-medium text-slate-300 mb-2">
+                                Your Comment
+                            </label>
+                            {{ form.text }}
+                            {% if form.text.errors %}
+                            <div class="text-red-400 text-sm mt-1">
+                                {% for error in form.text.errors %}
+                                <p>{{ error }}</p>
+                                {% endfor %}
                             </div>
-                            <p class="text-slate-300">{{ comment.text }}</p>
+                            {% endif %}
+                        </div>
+
+                        <style>
+                            #id_text {
+                                width: 100%;
+                                padding: 0.75rem;
+                                background: rgba(255, 255, 255, 0.05);
+                                border: 1px solid rgba(255, 255, 255, 0.1);
+                                border-radius: 0.5rem;
+                                color: white;
+                                font-family: inherit;
+                                resize: vertical;
+                                min-height: 120px;
+                                transition: all 0.3s ease;
+                            }
+
+                            #id_text:focus {
+                                outline: none;
+                                background: rgba(255, 255, 255, 0.1);
+                                border-color: rgba(59, 130, 246, 0.5);
+                                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+                            }
+
+                            #id_text::placeholder {
+                                color: rgba(255, 255, 255, 0.4);
+                            }
+                        </style>
+
+                        <button type="submit" class="play-button px-6 py-3 rounded-full text-white font-semibold flex items-center justify-center space-x-2 w-full sm:w-auto">
+                            <i class="fas fa-paper-plane"></i>
+                            <span>Post Comment</span>
+                        </button>
+                    </form>
+                </div>
+                {% else %}
+                <div class="glass-effect rounded-xl p-8 mb-12 text-center">
+                    <p class="text-slate-300 mb-4">
+                        <i class="fas fa-lock mr-2 text-yellow-400"></i>
+                        Please <a href="{% url 'register' %}" class="text-blue-400 hover:text-blue-300 underline">sign in</a> to leave a comment.
+                    </p>
+                </div>
+                {% endif %}
+
+                <!-- Display Comments -->
+                {% if movie.comments.all %}
+                <div class="space-y-6">
+                    <h3 class="text-xl font-semibold mb-6 flex items-center">
+                        <i class="fas fa-comments mr-3 text-blue-400"></i>
+                        {{ movie.comments.all|length }} Comment{{ movie.comments.all|length|pluralize }}
+                    </h3>
+                    {% for comment in movie.comments.all %}
+                    <div class="glass-effect rounded-xl p-6 hover:bg-white/15 transition-all duration-300">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-user text-white text-sm"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <span class="font-semibold text-white">{{ comment.author.username }}</span>
+                                    <span class="text-slate-500 text-xs">•</span>
+                                    <span class="text-slate-400 text-sm">{{ comment.created_date|date:"M d, Y \a\t H:i" }}</span>
+                                </div>
+                                <p class="text-slate-300 leading-relaxed">{{ comment.text }}</p>
+                            </div>
                         </div>
                     </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
+                {% else %}
+                <div class="text-center py-12">
+                    <i class="fas fa-comments text-4xl text-slate-500 mb-4 block"></i>
+                    <p class="text-slate-400">No comments yet. Be the first to comment!</p>
+                </div>
+                {% endif %}
             </div>
         </div>
     </section>
-    {% endif %}
 
     <!-- Footer -->
     <footer class="bg-slate-800 py-8 border-t border-slate-700">
@@ -370,11 +477,7 @@
     <button id="scrollToTop" class="fixed bottom-8 right-8 glass-effect p-3 rounded-full opacity-0 transition-opacity duration-300 hover:bg-white/20">
         <i class="fas fa-arrow-up text-white"></i>
     </button>
-<div style="text-align:center; margin-top:50px;">
-    <video id="video" controls width="800">
-        <source src="{{ movie.film.url }}" type="video/mp4">
-    </video>
-</div>
+
     <script>
         // Scroll to top functionality
         const scrollToTopBtn = document.getElementById('scrollToTop');

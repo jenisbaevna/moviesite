@@ -2,6 +2,8 @@ from django.db import models
 from django.utils.text import slugify
 from django.contrib.auth.models import AbstractUser
 
+from movie_pr import settings
+
 class CustomUSer(AbstractUser):
     phone_num=models.CharField(max_length=13,blank=True,null=True)
     avatar=models.ImageField(upload_to='avatars',blank=True,null=True)
@@ -31,9 +33,11 @@ class Country(models.Model):
     def __str__(self):
         return self.country
 class Comments(models.Model):
-    text=models.TextField()
-    created_date=models.DateTimeField(auto_now_add=True)
-    author=models.ForeignKey(CustomUSer,on_delete=models.CASCADE)
+    movie = models.ForeignKey('Movie', on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    text = models.TextField()
+    created_date = models.DateTimeField(auto_now_add=True)
+
     def __str__(self):
         return self.text
 class Languages(models.Model):
@@ -49,10 +53,9 @@ class Movie(models.Model):
     image=models.ImageField(upload_to='movies/')
     desc=models.TextField()
     trailler=models.URLField()
-    film=models.FileField()
+    film=models.FileField(upload_to='movies/')
     actor=models.ManyToManyField(Actors)
     countries=models.ManyToManyField(Country)
-    comments=models.ManyToManyField(Comments,blank=True)
     languages=models.ManyToManyField(Languages)
     genres=models.ManyToManyField(Genres)
     def __str__(self):

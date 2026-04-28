@@ -1,0 +1,12 @@
+{% extends 'home.html' %}
+
+{% block title %} Izlew natiyjeleri {% endblock %}
+
+{% block content %}
+
+{% for i in movies %}
+
+{{ i.title}}
+<h1>{{i.films}}</h1>
+{% endfor %}
+{% endblock %}
