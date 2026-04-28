@@ -14,7 +14,7 @@ SECRET_KEY = 'django-insecure-p^j-7ki-9$wt&@_24-%7s31javp(4!59p=h(chwu4^%sc2#r=h
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [ 'moviesite-eight-pi.vercel.app' ]
 
 
 # Application definition
